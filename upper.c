@@ -38,7 +38,6 @@ void upper_hull(point *pts)
  * % upper 200 
  * % evince upper_hull.pdf
  */
-
 int main(int argc, char **argv)
 {
 	point *pts;

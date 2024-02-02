@@ -12,7 +12,7 @@ CC = gcc
 BDIR = $(PWD)
 
 # Programme sequentiel
-PROG = upper
+PROG = upper.out
 
 #PVM_ROOT = /usr/share/pvm3
 #PVM_ARCH = LINUXI386
@@ -36,4 +36,5 @@ $(BDIR)/%: point.o %.o
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o $(EXEC) points upper_hull.pdf
+	rm -vf *.o *.out $(EXEC) points upper_hull.pdf
+
