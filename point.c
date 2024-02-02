@@ -13,10 +13,7 @@
 #include <unistd.h>
 #include <malloc.h>
 #include "point.h"
-
-/*
- * (de)allocation
- */
+#include "pvm3.h"
 
 point *point_alloc()
 {
@@ -29,9 +26,6 @@ point *point_alloc()
     return pt;
 }
 
-/*
- * dealloue une liste de points
- */
 void point_free(point *pts)
 {
     if (!pts)
@@ -49,13 +43,6 @@ static int compareX(point **i, point **j)
     return (*i)->x - (*j)->x;
 }
 
-/*
-   Construit un ensemble de points d'abscisse comprise
-   entre 0 et XMAX et d'ordonnee entre 0 et YMAX.
-   Tous les points ont des abscisses et des ordonnees
-   differentes. Les points sont trie's par ordre croissant
-   des abscisses.
- */
 point *point_random(int nbPts) /* nombre de points a` tirer */
 {
     int i, j;
@@ -86,10 +73,6 @@ point *point_random(int nbPts) /* nombre de points a` tirer */
     return (point *)*pts;
 }
 
-/*
- * genere une liste de points, avec ligne si solid == 1
- * generation au format jgraph
- */
 void point_print(point *pts, int solid)
 /* solid: enveloppe ou non */
 {
@@ -108,10 +91,6 @@ void point_print(point *pts, int solid)
         printf("linetype solid\ntitle\n");
 }
 
-/*
-* au format gnuplot, dans 2 fichiers.
-* appele ensuite gnuplot
-*/ 
 void point_print_gnuplot(point *pts, int solid)
 /* solid: enveloppe ou non */
 {
@@ -159,11 +138,6 @@ int point_nb(point *pts)
     return nb;
 }
 
-/*
- * partitionne une liste en deux.
- * retourne le milieu de la liste
- */
-
 point *point_part(point *pts)
 {
     int nb, next;
@@ -171,24 +145,23 @@ point *point_part(point *pts)
 
     midpred = NULL;
     for (mid = cur = pts, next = 0; cur != NULL; cur = cur->next, next = 1 - next)
+    {
         if (next)
         {
             midpred = mid;
             mid = mid->next;
         }
+    }
     if (midpred)
+    {
         midpred->next = NULL;
+    }
+
     return mid;
 }
 
 /* pente definie par 2 points */
 #define PENTE(pt1, pt2) ((float)((pt2)->y - (pt1)->y) / (float)((pt2)->x - (pt1)->x))
-
-/*
-   Calcule l'enveloppe convexe haute de 4 points au plus.
-   Les points de l'enveloppe sont lies par une liste
-   Les autres sont elimines de la liste.
- */
 
 point *point_UH(point *pts) /* ensemble des points a` "envelopper" */
 {
@@ -312,4 +285,33 @@ point *point_merge_UH(point *pts1, point *pts2)
     }
     pt1->next = pt2;
     return pts1;
+}
+
+
+void send_point(int tid, point *pnt)
+{
+
+    int taille = point_nb(pnt);
+    int tabX[taille];
+    int tabY[taille];
+    
+    int i;
+    point *cur ;
+    for (cur = pnt, i=0 ; i<taille && cur != NULL; cur = cur->next, i++) {
+        tabX[i] = cur->x;
+        tabY[i] = cur->y;
+    }
+    
+    pvm_initsend(PvmDataDefault);
+    pvm_pkint(&taille, 1,1);
+    pvm_pkint(tabX, taille, 1);
+    pvm_pkint(tabY, taille, 1);
+    // pvm_send(tid, );
+}
+
+/**
+ * @brief recoint une liste de point de puis le père
+ */
+void receive_point()
+{
 }

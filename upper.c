@@ -22,6 +22,14 @@
 void upper_hull(point *pts)
 {
     point *upper, *pts2;
+    /**
+     * Un seul père :
+     * Génère plein de fils et distribue les tâches (potentiellement par une pile)
+     * voir MSSrtCorrige
+     * 
+     * Le père se charge de la séparation en sous-ensembles
+     * 
+    */
 
     upper = point_UH(pts); /* retourne 0 si plus de 4 points */
     if (!upper)
@@ -49,6 +57,7 @@ int main(int argc, char **argv)
         exit(-1);
     }
     pts = point_random(atoi(argv[1]));
+    point_print(pts);
     point_print_gnuplot(pts, 0); /* affiche l'ensemble des points */
     upper_hull(pts);
     point_print_gnuplot(pts, 1); /* affiche l'ensemble des points restant, i.e
