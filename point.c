@@ -290,7 +290,6 @@ point *point_merge_UH(point *pts1, point *pts2)
 
 void send_point(int tid, point *pnt)
 {
-
     int taille = point_nb(pnt);
     int tabX[taille];
     int tabY[taille];
@@ -306,12 +305,35 @@ void send_point(int tid, point *pnt)
     pvm_pkint(&taille, 1,1);
     pvm_pkint(tabX, taille, 1);
     pvm_pkint(tabY, taille, 1);
-    // pvm_send(tid, );
+    // pvm_send(tid, 1);
 }
 
 /**
  * @brief recoint une liste de point de puis le père
  */
-void receive_point()
+point* receive_point()
 {
+	int bufid = pvm_recv(tid, -1);
+
+	int tabSize;
+	pvm_upkint(tabSize, 1, 1);
+	int tabX[tabSize];
+	int tabY[tabSize];
+	pvm_upkint(tabX, tabSize, 1);
+	pvm_upkint(tabY, tabSize, 1);
+
+	point *first = point_alloc();
+	point *actual = first;
+	actual->x = tabX[0];
+	actual->y = tabY[0];
+
+	for (int i=1; i<tabSize; i++) {
+		point *prec = actual;
+		actual = point_alloc();
+		actual->x = tabX[i];
+		actual->y = tabY[i];
+		prec->next = actual;
+	}
+
+	return first;
 }
