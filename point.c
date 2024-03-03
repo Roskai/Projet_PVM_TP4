@@ -289,7 +289,7 @@ point *point_merge_UH(point *pts1, point *pts2)
 }
 
 
-void send_point(int tid, point *pnt)
+/*void send_point(int tid, point *pnt)
 {
     int taille = point_nb(pnt);
     int tabX[taille];
@@ -309,10 +309,7 @@ void send_point(int tid, point *pnt)
     // pvm_send(tid, 1);
 }
 
-/**
- * @brief recoint une liste de point de puis le père
- */
-point* receive_point()
+void receive_point(int tid)
 {
 	int bufid = pvm_recv(tid, -1);
 
@@ -336,5 +333,5 @@ point* receive_point()
 		prec->next = actual;
 	}
 
-	return first;
-}
+	//return first;
+}*/

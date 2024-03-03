@@ -13,6 +13,7 @@ BDIR = $(PWD)
 
 # Programme sequentiel
 PROG = upper
+
 #PVM_ROOT = /usr/share/pvm3
 #PVM_ARCH = LINUXI386
 
@@ -36,4 +37,3 @@ $(BDIR)/%: point.o %.o
 
 clean:
 	rm -vf *.o $(EXEC) points upper_hull.pdf
-
