@@ -9,8 +9,10 @@
 #define XMAX (1024)
 #define YMAX (1024)
 
-#define MSG_SEND 0
-#define MSG_RECV 1
+#define MSG_RESULT 0
+#define MSG_UH 1
+#define MSG_MERGE 2
+#define MSG_END 3
 
 
 /*
