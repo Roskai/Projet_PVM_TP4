@@ -185,6 +185,7 @@ point *point_UH(point *pts) /* ensemble des points a` "envelopper" */
         return pts;
     }
 
+	// if (nb == 4)
     cur = pts;
     if ((PENTE(cur, cur->next) < PENTE(cur, cur->next->next)) ||
         (PENTE(cur, cur->next) < PENTE(cur, cur->next->next->next)))
