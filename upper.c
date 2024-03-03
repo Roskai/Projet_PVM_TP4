@@ -15,6 +15,9 @@
 #include "stdlib.h"
 #include "point.h"
 
+#define P 5
+#define SLAVE "upper_slave"	/* nom du programme esclave */
+
 #define PB 50 // TODO mieux refaire
 
 static point *Q[PB]; /* La pile de points */
@@ -74,7 +77,29 @@ void upper_hull(point *pts)
 	// }
 
 	int i = 0;
-	while (pts != NULL) break;
+	point* prec = NULL;
+	while (pts != NULL) 
+	{
+		if (prec != NULL) prec->next = NULL;
+		empile(pts);
+		for (size_t i = 0; i < 4; i++)
+		{
+			if (pts != NULL)
+			{
+				prec = pts;
+				pts = pts->next;
+			}
+		}
+	}
+
+	point *p = depile();
+	while (p != NULL)
+	{
+		printf("%d\n",point_nb(p));
+		p = depile();
+	}
+
+	//pvm_spawn(EPATH "/"+SLAVE, (char**)0, 0, "", P, tids);
 }
 
 /*
