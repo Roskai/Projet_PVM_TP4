@@ -1,8 +1,12 @@
 # Construction parallèle de l'enveloppe convexe haute d'un ensemble de points dans le plan.
 - [Construction parallèle de l'enveloppe convexe haute d'un ensemble de points dans le plan.](#construction-parallèle-de-lenveloppe-convexe-haute-dun-ensemble-de-points-dans-le-plan)
 	- [Descriptif du Problème : Construction de l'Enveloppe Convexe Haute](#descriptif-du-problème--construction-de-lenveloppe-convexe-haute)
+		- [Introduction :](#introduction-)
+		- [Enveloppe Convexe :](#enveloppe-convexe-)
+		- [Diviser et Conquérir :](#diviser-et-conquérir-)
+		- [Objectif de l'Algorithme :](#objectif-de-lalgorithme-)
 	- [Présentation des Structures de Données :](#présentation-des-structures-de-données-)
-
+		- [Justification des Choix de Structures pour Optimiser la Performance Parallèle :](#justification-des-choix-de-structures-pour-optimiser-la-performance-parallèle-)
 
 
 **Auteurs :**
@@ -10,12 +14,26 @@
 - Angel GEZAT
 
 --- 
-
 ## Descriptif du Problème : Construction de l'Enveloppe Convexe Haute
 
-L'objectif de ce projet est de développer un algorithme parallèle pour construire l'enveloppe convexe haute d'un ensemble de points dans le plan. L'enveloppe convexe d'un ensemble de points est le plus petit polygone convexe qui englobe tous les points. Un polygone est considéré comme convexe si le segment de droite défini par chaque paire de points dans l'ensemble est entièrement contenu à l'intérieur du polygone.
+### Introduction :
 
-L'algorithme utilisé est de type "diviser et conquérir", une approche qui réduit la taille du problème jusqu'à ce qu'une solution puisse être calculée de manière simple. L'idée principale est de diviser l'ensemble de points en deux sous-ensembles, calculer l'enveloppe convexe haute pour chaque sous-ensemble, puis fusionner les résultats.
+La construction de l'enveloppe convexe haute conciste à trouver le polygone convexe le plus petit qui englobe un ensemble de points donné dans un plan. L'approche "diviser et conquérir" eva être utiliser pour résoudre efficacement ce problème en le subdivisant en sous-problèmes plus simples.
+
+### Enveloppe Convexe :
+
+L'enveloppe convexe d'un ensemble de points dans le plan est définie comme le plus petit polygone convexe qui contient tous les points de l'ensemble. Un polygone est dit convexe si, pour tout couple de points appartenant à l'ensemble, le segment de droite défini par le couple est entièrement contenu dans le polygone. En d'autres termes, l'enveloppe convexe est la frontière extérieure la plus simple qui englobe tous les points.
+
+### Diviser et Conquérir :
+
+La méthode "diviser et conquérir" est une stratégie algorithmique où un problème est divisé en sous-problèmes plus petits et plus simples qui sont résolus de manière récursive. Ensuite, les solutions partielles sont combinées pour obtenir la solution globale du problème. Dans le contexte de la construction de l'enveloppe convexe haute, cette approche est utilisée pour subdiviser l'ensemble de points en deux sous-ensembles plus petits, calculer l'enveloppe convexe de chaque sous-ensemble, puis fusionner les résultats pour obtenir l'enveloppe convexe haute globale.
+
+### Objectif de l'Algorithme :
+
+L'objectif principal de l'algorithme est de parvenir à une solution efficace pour construire l'enveloppe convexe haute d'un ensemble de points. En utilisant la méthode "diviser et conquérir", la complexité du problème est réduite en résolvant des sous-problèmes plus simples, ce qui permet une solution plus efficace.
+
+Ce chapitre a jeté les bases du problème de construction de l'enveloppe convexe haute, en introduisant les termes clés tels que l'enveloppe convexe et la stratégie "diviser et conquérir". La suite du rapport explorera en détail l'algorithme parallèle utilisé, les structures de données choisies, et fournira une trace d'exécution avec une courbe d'enveloppe convexe si le projet est abouti.
+
 
 ## Présentation des Structures de Données :
 
@@ -33,10 +51,9 @@ L'algorithme utilisé est de type "diviser et conquérir", une approche qui réd
     - **Description :** La variable statique `to_UH` est une pile de pointeurs vers des points. Elle est utilisée pour stocker les points à calculer lors de la construction de l'enveloppe convexe haute.
     - **Justification :** De manière similaire à `to_merge`, l'utilisation d'une pile pour `to_UH` est appropriée pour gérer les points à calculer lors de l'algorithme. Elle facilite l'organisation et la récupération des points nécessaires à chaque étape.
 
-**Justification des Choix de Structures pour Optimiser la Performance Parallèle :**
+### Justification des Choix de Structures pour Optimiser la Performance Parallèle :
 
 - **Liste Chaînée :** L'utilisation d'une liste chaînée pour représenter les points de l'enveloppe convexe permet une manipulation aisée des points, notamment pour les opérations d'ajout en fin de liste. Cela peut être crucial pour les étapes où l'ordre des points est important.
 
 - **Piles :** Les piles (`to_merge` et `to_UH`) sont des structures de données adaptées à la nature récursive de l'algorithme "diviser et conquérir". Elles simplifient la gestion des points à différentes étapes de l'algorithme, facilitant ainsi le traitement parallèle.
 
-En résumé, les structures de données choisies ont été sélectionnées en fonction des exigences spécifiques de l'algorithme, en privilégiant la simplicité d'accès et de manipulation pour optimiser les performances parallèles. La combinaison d'une liste chaînée pour représenter les points et de piles pour gérer les opérations récursives contribue à une implémentation efficace de l'algorithme de construction de l'enveloppe convexe haute.
