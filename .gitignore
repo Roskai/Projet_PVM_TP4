@@ -2,3 +2,4 @@ upper
 upper_slave
 upper_hull.pdf
 /.vscode
+*.o

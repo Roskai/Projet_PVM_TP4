@@ -132,7 +132,6 @@ int slave_receive_point(int tid)
 
 int main(void)
 {
-	printf("pass²");
 	while (slave_receive_point(pvm_parent()));
 	exit(EXIT_SUCCESS);
 }
