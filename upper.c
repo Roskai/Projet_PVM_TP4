@@ -25,7 +25,6 @@ static int slave_queue[NB_SLAVE];
 static int slave_queue_nb = 0;
 int depile_slave()
 {
-	//printf(" -- Dépile : %d\n",slave_queue[slave_queue_nb-1]);
 	if (slave_queue_nb > 0)
 		return slave_queue[--slave_queue_nb];
 	else
@@ -33,7 +32,6 @@ int depile_slave()
 }
 void empile_slave(int tid)
 {
-	//printf(" -- Empile : %d\n",tid);
 	slave_queue[slave_queue_nb++] = tid;
 }
 
@@ -131,7 +129,7 @@ void master_send_point(int tid, point *pts, point *pts2, int id)
 
 	if (pts2 != NULL)
 	{
-		int tabSize2 = point_nb(pts);
+		int tabSize2 = point_nb(pts2);
 		int *tabX2 = malloc(tabSize2 * sizeof(int));
 		int *tabY2 = malloc(tabSize2 * sizeof(int));
 		for (cur = pts2, i=0 ; i<tabSize2 && cur != NULL; cur = cur->next, i++) {
@@ -178,8 +176,10 @@ void master_receive_point()
 		prec->next = actual;
 	}
 
+	#if AFFICHE
 	printf("Reception par %d de : ", sender[0]);
-	printf_point(first);
+	point_printf(first);
+	#endif
 
 	add_to_merge(id, first);
 	empile_slave(sender[0]);
@@ -188,8 +188,9 @@ void master_receive_point()
 /*
  * Calcul de l'enveloppe convexe
  */
-void upper_hull(point *pts)
+point *upper_hull(point *points)
 {
+	point *pts = points;
     /** TODO : bouger cette explication
      * Un seul père :
      * Génère plein de fils et distribue les tâches (potentiellement par une pile)
@@ -213,7 +214,9 @@ void upper_hull(point *pts)
     */
 
 	// Allocations
+	#if AFFICHE
 	printf("Division en groupe de 4 max :\n");
+	#endif
 	int nb_points = point_nb(pts);
 	pb_max = ((nb_points / 4) + (nb_points%4 == 0 ? 0 : 1));
 	to_UH = (point **)malloc(pb_max * sizeof(point *));
@@ -244,11 +247,13 @@ void upper_hull(point *pts)
 		}
 	}
 
+	#if AFFICHE
 	for (size_t i = 0; i < pb_max; i++)
 	{
 		printf("   - ");
-		printf_point(to_UH[i]);
+		point_printf(to_UH[i]);
 	}
+	#endif
 
 	// Apparition des esclaves
 	pvm_spawn(EPATH "/upper_slave", (char**)0, 0, "", NB_SLAVE, slave_queue);
@@ -257,55 +262,65 @@ void upper_hull(point *pts)
 	// Calcul de l'UH
 	/* Envoi à chaque esclave */
 	for (size_t i=0; i<pb_max && i<NB_SLAVE; i++) { // Envoi d'un sous-ensemble à chaque esclave (dans la mesure des sous-ensembles disponibles)
+		#if AFFICHE
 		int sl = depile_slave();
 		printf("Envoie à l'esclave %d de : ", sl);
 		empile_slave(sl);
-		printf_point(to_UH[i]);
+		point_printf(to_UH[i]);
+		#endif
 		master_send_point(depile_slave(), get_and_remove_to_UH(i), NULL, i);
 	}
-		
+
+	#if AFFICHE
 	printf("Calcul d'UH : \n");
 	printf("Nombre d'UH à calculer restant : %d\n", to_UH_nb);
+	#endif
 	while (to_UH_nb>0) // S'il reste des sous-ensembles à l'UH non-calculé
 	{
 		int sender;
+		#if AFFICHE
 		printf("En attente d'un retour d'esclave...\n");
+		#endif
 		master_receive_point(); // On reçoit l'ensemble de point et l'ajoute au tableau des ensembles à fusionner
 		
 		int id = first_to_UH();
+
+		#if AFFICHE
 		int sl = depile_slave();
 		printf("Envoie à l'esclave %d de : ", sl);
 		empile_slave(sl);
-		printf_point(to_UH[id]);
+		point_printf(to_UH[id]);
+		#endif
 
 		master_send_point(depile_slave(), get_and_remove_to_UH(id), NULL, id); // On donne à l'esclave ayant répondu un autre ensemble pour lequel calculer l'UH
 	}
 
+	#if AFFICHE
 	printf("Fusion : \n");
 	printf("Nombre de fusion à effectuer restant : %d\n", to_merge_nb);
-	while (1) // Lorsque tout les UH de sous-ensemble ont été calculé
+	#endif
+	while (!solved() && slave_queue_nb != NB_SLAVE) // Lorsque tout les UH de sous-ensemble ont été calculé
 	{
+		#if AFFICHE
 		printf("En attente d'un retour d'esclave...\n");
+		#endif
+
 		master_receive_point(); // On reçoit l'ensemble de point et l'ajoute au tableau des ensembles à fusionner
 
+		#if AFFICHE
 		printf("Nombre d'ensembles à fusionner restant : %d\n", to_merge_nb);
 		printf("Ensembles à fusionner restant : \n");
 		for (size_t i = 0; i < pb_max; i++)
 		{
 			printf("   %d - ",i);
-			if (to_merge_status[i] == READY_TO_MERGE) {
-				printf_point(to_merge[i]);
-			} else if (to_merge_status[i] == MERGED) {
+			if (to_merge_status[i] == READY_TO_MERGE)
+				point_printf(to_merge[i]);
+			else if (to_merge_status[i] == MERGED)
 				printf("MERGED\n");
-			} else {
+			else
 				printf("MERGING\n");
-			}
 		}
-		
-
-		if (solved()) { // S'il reste un seul ensemble de points à fusionner
-			break;
-		}
+		#endif
 
 		int pos1 = -1;
 		int pos2 = -1;
@@ -324,13 +339,15 @@ void upper_hull(point *pts)
 		}
 		while (pos1 != -1 && pos2 != -1 && slave_queue_nb > 0)
 		{
+			#if AFFICHE
 			int sl = depile_slave();
-			printf("Fusion par %d :\n", sl);
+			printf("Fusion par %d de :\n", sl);
 			empile_slave(sl);
 			printf("   %d - ",pos1);
-			printf_point(to_merge[pos1]);
+			point_printf(to_merge[pos1]);
 			printf("   %d - ",pos2);
-			printf_point(to_merge[pos2]);
+			point_printf(to_merge[pos2]);
+			#endif
 
 			master_send_point(depile_slave(),
 				get_and_remove_to_merge(pos1),
@@ -376,8 +393,12 @@ void upper_hull(point *pts)
 	free(to_merge_status);
 	to_merge_status = NULL;
 
+	#if AFFICHE
 	printf("Résultat : ");
-	printf_point(pts);
+	point_printf(pts);
+	#endif
+
+	return pts;
 }
 
 /*
@@ -388,7 +409,10 @@ void upper_hull(point *pts)
  */
 int main(int argc, char **argv)
 {
+	#if AFFICHE
 	pvm_catchout(stdout);
+	#endif
+	
 	point *pts;
 	if (argc != 2) {
 		fprintf(stderr, "usage: %s <nb points>\n", *argv);
@@ -397,13 +421,17 @@ int main(int argc, char **argv)
 	pts = point_random(atoi(argv[1]));
 	point_print_gnuplot(pts, 0); /* affiche l'ensemble des points */
 
+	#if AFFICHE
 	printf("PTS before : ");
-	printf_point(pts);
+	point_printf(pts);
+	#endif
 
-	upper_hull(pts);
+	pts = upper_hull(pts);
 
+	#if AFFICHE
 	printf("PTS after : ");
-	printf_point(pts);
+	point_printf(pts);
+	#endif
 
 	point_print_gnuplot(pts, 1); /* affiche l'ensemble des points restant, i.e
 					l'enveloppe, en reliant les points */
