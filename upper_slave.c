@@ -16,7 +16,7 @@
 #include "point.h"
 #include "pvm3.h"
 
-void slave_send_point(int tid, point *pts)
+void slave_send_point(int tid, point *pts, int id)
 {
     int tabSize = point_nb(pts);
 	int *tabX = malloc(tabSize * sizeof(int));
@@ -30,6 +30,7 @@ void slave_send_point(int tid, point *pts)
     }
     
     pvm_initsend(PvmDataDefault);
+    pvm_pkint(&id, 1,1);
     pvm_pkint(&tabSize, 1,1);
     pvm_pkint(tabX, tabSize, 1);
     pvm_pkint(tabY, tabSize, 1);
@@ -58,6 +59,8 @@ int slave_receive_point(int tid)
 	if (merge) printf("FUSIONNE.\n");
 	else printf("CALCUL L'UH.\n");
 
+	int id;
+	pvm_upkint(&id, 1, 1);
 	int tabSize;
 	pvm_upkint(&tabSize, 1, 1);
 	int *tabX = malloc(tabSize * sizeof(int));
@@ -123,7 +126,7 @@ int slave_receive_point(int tid)
 	printf("Send : ");
 	printf_point(pts);
 
-	slave_send_point(tid, pts);
+	slave_send_point(tid, pts, id);
 	
 	printf("Renvoyé au maître.\n");
 
