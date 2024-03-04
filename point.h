@@ -91,12 +91,4 @@ extern point *point_merge_UH();
  */
 extern void upper_hull();
 
-/**
- * @brief envoie une liste de point vers le fils
- */
-extern void send_point();
-
-/**
- * @brief recoint une liste de point de puis le père
- */
-extern void receive_point();
+extern void point_print();

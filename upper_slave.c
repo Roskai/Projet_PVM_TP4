@@ -36,6 +36,9 @@ void slave_send_point(int tid, point *pts)
 
     pvm_send(tid, MSG_RESULT);
 
+	free(tabX);
+	free(tabY);
+
 	point_free(pts);
 }
 
@@ -43,15 +46,20 @@ int slave_receive_point(int tid)
 {
 	int bufid, bytes[1], msgtag[1], sender[1];
 
+	printf("En attente d'un message du maitre...\n");
 	bufid = pvm_recv(tid, -1);
+	printf("Message recu : ");
 	pvm_bufinfo(bufid, bytes, msgtag, sender);
 
+	if (msgtag[0] == MSG_END) printf("FIN.\n");
 	if (msgtag[0] == MSG_END) return 0;
 
 	int merge = (msgtag[0] == MSG_MERGE);
+	if (merge) printf("FUSIONNE.\n");
+	else printf("CALCUL L'UH.\n");
 
 	int tabSize;
-	pvm_upkint(tabSize, 1, 1);
+	pvm_upkint(&tabSize, 1, 1);
 	int *tabX = malloc(tabSize * sizeof(int));
 	int *tabY = malloc(tabSize * sizeof(int));
 	pvm_upkint(tabX, tabSize, 1);
@@ -70,12 +78,19 @@ int slave_receive_point(int tid)
 		prec->next = actual;
 	}
 
-	point *result;
+	free(tabX);
+	free(tabY);
+
+	printf("Chaine 1 : ");
+	printf_point(pts);
+
 	if (!merge)
 	{
-		result = point_UH(pts);
-	} else {
-		pvm_upkint(tabSize, 1, 1);
+		point_UH(pts);
+	}
+	else
+	{
+		pvm_upkint(&tabSize, 1, 1);
 		tabX = malloc(tabSize * sizeof(int));
 		tabY = malloc(tabSize * sizeof(int));
 		pvm_upkint(tabX, tabSize, 1);
@@ -93,17 +108,31 @@ int slave_receive_point(int tid)
 			actual->y = tabY[i];
 			prec->next = actual;
 		}
+		
+		free(tabX);
+		free(tabY);
 
-		result = point_merge_UH(pts, pts2);
+		printf("Chaine 2 : ");
+		printf_point(pts2);
+
+		point_merge_UH(pts, pts2);
+
+		point_free(pts2);
 	}
 
-	slave_send_point(tid, result);
+	printf("Send : ");
+	printf_point(pts);
+
+	slave_send_point(tid, pts);
+	
+	printf("Renvoyé au maître.\n");
 
 	return 1;
 }
 
-int main(int argc, char **argv)
+int main(void)
 {
+	printf("pass²");
 	while (slave_receive_point(pvm_parent()));
 	exit(EXIT_SUCCESS);
 }
