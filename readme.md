@@ -92,5 +92,8 @@ Le code implémente un algorithme parallèle pour le calcul de l'enveloppe conve
 
 ## Conclusion
 
-Le projet s'est fini avec succès dont voici le graphique final : img
+Le projet est une réussite ! Voici le graphique final :
 
+![upper hull réussi](upper_hull_Final.png)
+
+*Une enveloppe convexe haute avec 200 points.*
