@@ -6,8 +6,11 @@
  *  Definition du programme upper
  */
 
-#define AFFICHE 1
+#define AFFICHE 0 // 1 si affichage de la progression souhaité, 0 sinon
 
+/**
+ * Messages PVM utilisables
+*/
 #define MSG_RESULT 0
 #define MSG_UH 1
 #define MSG_MERGE 2

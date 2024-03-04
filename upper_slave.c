@@ -16,6 +16,12 @@
 #include "point.h"
 #include "pvm3.h"
 
+/**
+ * Envoie d'un résultat de calcul par l'esclave au maitre :
+ *   - tid : Id du maitre
+ *   - pts : Chaine de point du résultat
+ *   - id : Identifiant de la chaine pour que le maitre reconnaisse
+ */
 void slave_send_point(int tid, point *pts, int id)
 {
     int tabSize = point_nb(pts);
@@ -43,6 +49,10 @@ void slave_send_point(int tid, point *pts, int id)
 	point_free(pts);
 }
 
+/**
+ * Réception du calcul du maitre par l'esclave :
+ *   - tid : Id du maitre
+ */
 int slave_receive_point(int tid)
 {
 	int bufid, bytes[1], msgtag[1], sender[1];
@@ -147,9 +157,12 @@ int slave_receive_point(int tid)
 	return 1;
 }
 
+/**
+ * Main de l'esclave
+*/
 int main(void)
 {
-	while (slave_receive_point(pvm_parent()));
+	while (slave_receive_point(pvm_parent())); // Tant qu'on a pas de message FIN : On reçoit
 	#if AFFICHE
 	printf("Arrêt !\n");
 	#endif
