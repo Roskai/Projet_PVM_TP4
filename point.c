@@ -191,7 +191,7 @@ point *point_part(point *pts)
    Les autres sont elimines de la liste.
  */
 
-point *point_UH(point *pts) /* ensemble des points a` "envelopper" */
+point *point_UH(point *pts) /* ensemble des points à "envelopper" */
 {
 	int nb;
 	point *cur, *tmp;
