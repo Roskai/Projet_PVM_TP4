@@ -6,13 +6,15 @@
  *  Definition du programme upper
  */
 
-#define XMAX (1024)
-#define YMAX (1024)
+#define AFFICHE 1
 
 #define MSG_RESULT 0
 #define MSG_UH 1
 #define MSG_MERGE 2
 #define MSG_END 3
+
+#define XMAX (1024)
+#define YMAX (1024)
 
 
 /*
@@ -29,6 +31,11 @@ struct st_point
  * dans point.c
  * utilitaire de calcul pour le TAD point
  */
+
+/*
+ * Affiche une chaine de point dans la console
+*/
+extern void point_printf();
 
 /*
  * (des)allocation
@@ -89,6 +96,4 @@ extern point *point_merge_UH();
  * calcul recursif d'enveloppe
  * convexe par bissection
  */
-extern void upper_hull();
-
-extern void point_print();
+extern point *upper_hull();

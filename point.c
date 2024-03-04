@@ -14,18 +14,9 @@
 #include <malloc.h>
 #include "point.h"
 
-void printf_point(point *pts) {
-	point *cur = pts;
-	while (cur) {
-		printf("(%d,%d)->",cur->x,cur->y);
-		cur = cur->next;
-	}
-	printf("\n");
-}
 /*
- * (de)allocation
+ * (des)allocation
  */
-
 point *point_alloc()
 {
 	point *pt;
@@ -302,4 +293,15 @@ point *point_merge_UH(point *pts1, point *pts2)
 	return pts1;
 }
 
-
+/**
+ * Permet l'affichage d'un point
+*/
+void point_printf(point *pts) {
+	point *cur = pts;
+	while (cur) {
+		printf("(%d,%d)",cur->x,cur->y);
+		if (cur->next != NULL) printf("->");
+		cur = cur->next;
+	}
+	printf("\n");
+}

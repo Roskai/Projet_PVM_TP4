@@ -46,61 +46,40 @@ void slave_send_point(int tid, point *pts, int id)
 int slave_receive_point(int tid)
 {
 	int bufid, bytes[1], msgtag[1], sender[1];
-
+	#if AFFICHE
 	printf("En attente d'un message du maitre...\n");
+	#endif
 	bufid = pvm_recv(tid, -1);
-	printf("Message recu : ");
 	pvm_bufinfo(bufid, bytes, msgtag, sender);
 
+	#if AFFICHE
+	printf("Message recu : ");
 	if (msgtag[0] == MSG_END) printf("FIN.\n");
+	#endif
+
 	if (msgtag[0] == MSG_END) return 0;
 
 	int merge = (msgtag[0] == MSG_MERGE);
+
+	#if AFFICHE
 	if (merge) printf("FUSIONNE.\n");
 	else printf("CALCUL L'UH.\n");
+	#endif
 
 	int id;
 	pvm_upkint(&id, 1, 1);
-	int tabSize;
-	pvm_upkint(&tabSize, 1, 1);
-	int *tabX = malloc(tabSize * sizeof(int));
-	int *tabY = malloc(tabSize * sizeof(int));
-	pvm_upkint(tabX, tabSize, 1);
-	pvm_upkint(tabY, tabSize, 1);
 
-	point *pts = point_alloc();
-	point *actual = pts;
-	actual->x = tabX[0];
-	actual->y = tabY[0];
-
-	for (int i=1; i<tabSize; i++) {
-		point *prec = actual;
-		actual = point_alloc();
-		actual->x = tabX[i];
-		actual->y = tabY[i];
-		prec->next = actual;
-	}
-
-	free(tabX);
-	free(tabY);
-
-	printf("Chaine 1 : ");
-	printf_point(pts);
-
-	if (!merge)
+	point *pts;
 	{
-		point_UH(pts);
-	}
-	else
-	{
+		int tabSize;
 		pvm_upkint(&tabSize, 1, 1);
-		tabX = malloc(tabSize * sizeof(int));
-		tabY = malloc(tabSize * sizeof(int));
+		int *tabX = malloc(tabSize * sizeof(int));
+		int *tabY = malloc(tabSize * sizeof(int));
 		pvm_upkint(tabX, tabSize, 1);
 		pvm_upkint(tabY, tabSize, 1);
 
-		point *pts2 = point_alloc();
-		actual = pts2;
+		pts = point_alloc();
+		point *actual = pts;
 		actual->x = tabX[0];
 		actual->y = tabY[0];
 
@@ -111,24 +90,59 @@ int slave_receive_point(int tid)
 			actual->y = tabY[i];
 			prec->next = actual;
 		}
-		
+
 		free(tabX);
 		free(tabY);
 
-		printf("Chaine 2 : ");
-		printf_point(pts2);
-
-		point_merge_UH(pts, pts2);
-
-		point_free(pts2);
+		#if AFFICHE
+		printf("Chaine 1 : ");
+		point_printf(pts);
+		#endif
 	}
 
-	printf("Send : ");
-	printf_point(pts);
+
+	if (!merge) point_UH(pts);
+	else
+	{
+		point* pts2;
+
+		int tabSize;
+		pvm_upkint(&tabSize, 1, 1);
+		int *tabX = malloc(tabSize * sizeof(int));
+		int *tabY = malloc(tabSize * sizeof(int));
+		pvm_upkint(tabX, tabSize, 1);
+		pvm_upkint(tabY, tabSize, 1);
+
+		pts2 = point_alloc();
+		point *actual = pts2;
+		actual->x = tabX[0];
+		actual->y = tabY[0];
+
+		for (int i=1; i<tabSize; i++) {
+			point *prec = actual;
+			actual = point_alloc();
+			actual->x = tabX[i];
+			actual->y = tabY[i];
+			prec->next = actual;
+		}
+
+		free(tabX);
+		free(tabY);
+
+		#if AFFICHE
+		printf("Chaine 2 : ");
+		point_printf(pts2);
+		#endif
+
+		point_merge_UH(pts, pts2);
+	}
+
+	#if AFFICHE
+	printf("Renvoie au maitre de : ");
+	point_printf(pts);
+	#endif
 
 	slave_send_point(tid, pts, id);
-	
-	printf("Renvoyé au maître.\n");
 
 	return 1;
 }
@@ -136,5 +150,8 @@ int slave_receive_point(int tid)
 int main(void)
 {
 	while (slave_receive_point(pvm_parent()));
+	#if AFFICHE
+	printf("Arrêt !\n");
+	#endif
 	exit(EXIT_SUCCESS);
 }
