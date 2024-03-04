@@ -12,6 +12,7 @@
 		- [Tableau pour la fusion de points (to\_merge)](#tableau-pour-la-fusion-de-points-to_merge)
 		- [Tableau pour le suivi de l'état de fusion (to\_merge\_status)](#tableau-pour-le-suivi-de-létat-de-fusion-to_merge_status)
 		- [Justification des Choix de Structures pour Optimiser la Performance Parallèle](#justification-des-choix-de-structures-pour-optimiser-la-performance-parallèle)
+	- [Parallélisation](#parallélisation)
 	- [Conclusion](#conclusion)
 
 **Auteurs :**
@@ -85,6 +86,11 @@ Ce chapitre a jeté les bases du problème de construction de l'enveloppe convex
 
 Ces choix de structures de données visent à optimiser l'efficacité et la parallélisation de l'algorithme tout en maintenant une gestion claire et ordonnée des opérations.
 
+## Parallélisation
+
+Le code implémente un algorithme parallèle pour le calcul de l'enveloppe convexe haute d'un ensemble de points en utilisant PVM. Les esclaves sont instanciés pour effectuer le calcul parallèle, et le processus maître envoie chaque sous-ensembles de points et leur opération à chaque esclave à l'aide de `master_send_point`. Les esclaves effectuent les opérations nécessaires, puis le maître les reçoit via `master_receive_point`. Le processus maître gère l'envoi de nouvelles tâches aux esclaves, la fusion des résultats et la gestion des piles de points à calculer ou à fusionner. Enfin, le programme se termine en envoyant un message de fin aux esclaves via `pvm_mcast` et se quitte le système PVM avec `pvm_exit`. Il existe les fonctions `slave_receive_point` et `slave_send_point` qui reçoit les points et les opérations et qui les renvoit.
+
 ## Conclusion
 
-Difficulté : nous avons eu des dépasserment d'entier...
+Le projet s'est fini avec succès dont voici le graphique final : img
+
