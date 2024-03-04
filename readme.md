@@ -18,7 +18,7 @@
 
 ### Introduction :
 
-La construction de l'enveloppe convexe haute conciste à trouver le polygone convexe le plus petit qui englobe un ensemble de points donné dans un plan. L'approche "diviser et conquérir" eva être utiliser pour résoudre efficacement ce problème en le subdivisant en sous-problèmes plus simples.
+La construction de l'enveloppe convexe haute conciste à trouver le polygone convexe le plus petit qui englobe un ensemble de points donné dans un plan. L'approche "diviser et conquérir" va être utiliser pour résoudre efficacement ce problème en le subdivisant en sous-problèmes plus simples.
 
 ### Enveloppe Convexe :
 
