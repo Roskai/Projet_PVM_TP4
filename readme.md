@@ -6,12 +6,13 @@
 		- [Enveloppe Convexe](#enveloppe-convexe)
 		- [Diviser et Conquérir](#diviser-et-conquérir)
 		- [Objectif de l'Algorithme](#objectif-de-lalgorithme)
-	- [Présentation des Structures de Données Utilisées](#présentation-des-structures-de-données-utilisées)
+	- [Présentation des structures de données utilisées](#présentation-des-structures-de-données-utilisées)
 		- [Structure de Point (point)](#structure-de-point-point)
-		- [Pile pour le Calcul de l'Enveloppe Convexe Haute (to\_UH)](#pile-pour-le-calcul-de-lenveloppe-convexe-haute-to_uh)
-		- [Pile pour la Fusion de Points (to\_merge)](#pile-pour-la-fusion-de-points-to_merge)
-		- [Variables pour le Suivi de l'État de Fusion (to\_merge\_status)](#variables-pour-le-suivi-de-létat-de-fusion-to_merge_status)
-		- [Justification des Choix de Structures pour Optimiser la Performance Parallèle :\*\*](#justification-des-choix-de-structures-pour-optimiser-la-performance-parallèle-)
+		- [Tableau pour le calcul de l'enveloppe convexe haute (to\_UH)](#tableau-pour-le-calcul-de-lenveloppe-convexe-haute-to_uh)
+		- [Tableau pour la fusion de points (to\_merge)](#tableau-pour-la-fusion-de-points-to_merge)
+		- [Tableau pour le suivi de l'état de fusion (to\_merge\_status)](#tableau-pour-le-suivi-de-létat-de-fusion-to_merge_status)
+		- [Justification des Choix de Structures pour Optimiser la Performance Parallèle](#justification-des-choix-de-structures-pour-optimiser-la-performance-parallèle)
+	- [Conclusion](#conclusion)
 
 **Auteurs :**
 
@@ -40,7 +41,7 @@ L'objectif principal de l'algorithme est de parvenir à une solution efficace po
 
 Ce chapitre a jeté les bases du problème de construction de l'enveloppe convexe haute, en introduisant les termes clés tels que l'enveloppe convexe et la stratégie "diviser et conquérir". La suite du rapport explorera en détail l'algorithme parallèle utilisé, les structures de données choisies, et fournira une trace d'exécution avec une courbe d'enveloppe convexe si le projet est abouti.
 
-## Présentation des Structures de Données Utilisées
+## Présentation des structures de données utilisées
 
 ### Structure de Point (point)
 
@@ -49,32 +50,32 @@ Ce chapitre a jeté les bases du problème de construction de l'enveloppe convex
     - `int x, y` : Coordonnées du point.
     - `point *next` : Pointeur vers le prochain point dans la liste chaînée des points de l'enveloppe.
 
-### Pile pour le Calcul de l'Enveloppe Convexe Haute (to_UH)
+### Tableau pour le calcul de l'enveloppe convexe haute (to_UH)
 
-- **Description :** Une pile de points utilisée pour stocker les points qui nécessitent le calcul de l'enveloppe convexe haute. La pile est utilisée de manière dynamique pendant l'exécution de l'algorithme.
+- **Description :** Une tableau de points utilisée pour stocker les points qui nécessitent le calcul de l'enveloppe convexe haute. La pile est utilisée de manière dynamique pendant l'exécution de l'algorithme.
   - **Champs :**
     - `point **to_UH` : Tableau de pointeurs vers les points à calculer.
     - `int to_UH_nb` : Index de tête de pile.
 
-### Pile pour la Fusion de Points (to_merge)
+### Tableau pour la fusion de points (to_merge)
 
-- **Description :** Une pile de points utilisée pour stocker les points qui nécessitent une fusion dans le processus de construction de l'enveloppe convexe haute.
+- **Description :** Un tableau de points utilisée pour stocker les points qui nécessitent une fusion dans le processus de construction de l'enveloppe convexe haute.
   - **Champs :**
     - `point **to_merge` : Tableau de pointeurs vers les points à fusionner.
     - `int to_merge_nb` : Index de tête de pile.
 
-### Variables pour le Suivi de l'État de Fusion (to_merge_status)
+### Tableau pour le suivi de l'état de fusion (to_merge_status)
 
 - **Description :** Un tableau de statuts utilisé pour suivre l'état des points à fusionner (en calcul, fusionné, prêt à être fusionné).
   - **Champs :**
-    - `int to_merge_merged_nb` : Index de tête de pile pour les points fusionnés.
     - `int *to_merge_status` : Tableau d'entiers représentant le statut des points à fusionner.
+    - `int to_merge_merged_nb` : Index de tête de pile pour les points fusionnés.
   - **Constantes :**
     - `MERGING` : Statut indiquant que le point est en cours de fusion.
     - `MERGED` : Statut indiquant que le point a été fusionné.
     - `READY_TO_MERGE` : Statut indiquant que le point est prêt à être fusionné.
 
-### Justification des Choix de Structures pour Optimiser la Performance Parallèle :**
+### Justification des Choix de Structures pour Optimiser la Performance Parallèle
 
 - **Liste Chaînée pour les Points :** La structure de point utilisant une liste chaînée est adaptée pour ajouter et retirer efficacement des points lors du calcul de l'enveloppe convexe.
 
@@ -83,3 +84,7 @@ Ce chapitre a jeté les bases du problème de construction de l'enveloppe convex
 - **Statuts pour le Suivi :** L'utilisation d'un tableau de statuts (`to_merge_status`) offre un moyen efficace de suivre l'état de fusion des points, facilitant la gestion parallèle des opérations.
 
 Ces choix de structures de données visent à optimiser l'efficacité et la parallélisation de l'algorithme tout en maintenant une gestion claire et ordonnée des opérations.
+
+## Conclusion
+
+Difficulté : nous avons eu des dépasserment d'entier...
